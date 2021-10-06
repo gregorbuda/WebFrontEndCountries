@@ -1,0 +1,56 @@
+﻿@{
+	ViewData["Title"] = "Home Page";
+
+}
+<div class="text-center" style="width: 600px; margin: 0 auto;" id="Login">
+	<h2>Login</h2>
+	<div class="form-group">
+		<label for="email">User:</label>
+		<input type="email" class="form-control" id="User" placeholder="User" name="User">
+	</div>
+	<div class="form-group">
+		<label for="pwd">Password:</label>
+		<input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pswd">
+	</div>
+	<div class="alert alert-warning" style="display:none;" id="Message">
+		<strong>Warning!</strong> The User and the pwd are requeried.
+	</div>
+	<button type="button" id="BtnLogin" class="btn btn-primary">Submit</button>
+</div>
+
+
+<script type="text/javascript">
+	document.getElementById("BtnLogin").addEventListener("click", VerLogin);
+	function VerLogin() {
+		var User = document.getElementById("User").value;
+		var pwd = document.getElementById("pwd").value;
+		if (User == '' || pwd == '') {
+
+			document.getElementById("Message").style.display = "block";
+		}
+		else
+		{
+			document.getElementById("Message").style.display = "none";
+
+			$.ajax({
+				url: '/Home/Login/',
+				data: { 'User': User, 'pwd': pwd },
+				cache: false,
+				type: "GET",
+				success: function (data) {
+					document.getElementById("Login").style.display = "none";
+					document.getElementById("Information").style.display = "block";
+					$('#Information').html(data);
+				},
+				beforeSend: function () {
+
+				},
+				complete: function (data) {
+				}
+			});
+		}
+	}
+</script>
+
+
+<div id="Information"></div>
