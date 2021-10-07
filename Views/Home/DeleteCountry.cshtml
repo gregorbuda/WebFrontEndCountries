@@ -1,0 +1,76 @@
+﻿@*
+	For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+	string Id = ViewBag.Id;
+	string Country = ViewBag.Country;
+}
+
+<strong>¿Do You Want to Delete, @Country ?</strong>
+<br />
+<button id="BtnDeleteCountry" type="button" class="btn btn-danger pull-left">Yes</button>
+
+<button type="button" class="btn btn-primary pull-right" data-dismiss="modal">No</button>
+
+<script type="text/javascript">
+    function gettoken() {
+        var token = '@Html.AntiForgeryToken()';
+        token = $(token).val();
+        return token;
+   }
+</script>
+
+<script type="text/javascript">
+	document.getElementById("BtnDeleteCountry").addEventListener("click", VerCountryDelete);
+	function VerCountryDelete() {
+		var Id = '@Id';
+		var Country = '@Country';
+		app.Reinicio();
+		$.ajax({
+			url: '/Home/DeleteCountry/',
+			data: { __RequestVerificationToken: gettoken(), 'Id': Id, 'Country': Country },
+			cache: false,
+			type: "POST",
+			contentType: 'application/x-www-form-urlencoded; charset=utf-8',
+			success: function (response) {
+
+				if (response.success == "Exitoso") {
+
+					$.confirm({
+						title: 'Mensaje',
+						content: "The country was deleted",
+						type: 'green',
+						typeAnimated: true,
+						buttons: {
+							Ok: {
+								text: 'Ok',
+								btnClass: 'btn-success',
+								action: function () {
+
+									CountriesList();
+									$('.modal-backdrop').remove();
+
+								}
+							}
+						}
+					});
+				}
+
+				if (response.success == "No") {
+					$.alert({
+						title: 'Warning',
+						content: "there was no connection, try again later",
+					});
+
+				}
+
+			},
+			beforeSend: function () {
+
+			},
+			complete: function (data) {
+
+			}
+		});
+	}
+</script>

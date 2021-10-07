@@ -3,3 +3,28 @@
 *@
 @{
 }
+
+
+<script type="text/javascript">
+
+	function VerEliminar() {
+
+		$.confirm({
+		title: 'Warning',
+			content: "there was no connection, try again later",
+		type: 'red',
+		typeAnimated: true,
+		buttons: {
+			Ok: {
+				text: 'Ok',
+				btnClass: 'btn-success',
+				action: function () {
+				}
+			}
+		}
+	});
+
+
+	}
+
+</script>

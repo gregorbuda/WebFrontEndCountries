@@ -1,84 +1,250 @@
 ﻿
 <script type="text/javascript">
 	$(document).ready(function () {
+		VerSesion();
 		$('#TableCountries').DataTable({
-
+			"initComplete": function (settings, json) {
+				document.getElementById("TableCountriesDiv").style.display = 'block';
+			},
 		});
 	});
 </script>
 
+<div style="width: 500px; position: absolute;  margin-top: 20px;   right: -200px;"><label for="exampleInputEmail1"><strong><a class="nav-link" href="#" id="BtnCloseSession">Close</a></strong></label></div>
+
+
 <h4 class="box-title"><i class="far fa-id-badge"></i> Countries</h4>
 <br />
 <button type="button" id="BtnInsert" class="btn btn-primary">Insert Country</button>
-<br/>
 <br />
-<table id="TableCountries" class="table table-striped table-bordered" style="width: 100%; overflow: auto;">
-	<thead>
-		<tr style="table-layout: fixed;">
-			<th>Id</th>
-			<th>Name</th>
-			<th>Alpha One</th>
-			<th>Alpha Two</th>
-			<th>Numeric Code</th>
-			<th>Independent</th>
-			<th>Details</th>
-			<th>Update</th>
-			<th>Delete</th>
-		</tr>
-	</thead>
-	<tbody>
-		@{
+<br />
+<div id="TableCountriesDiv" style="display:none;">
+	<table id="TableCountries" class="table table-striped table-bordered" style="width: 100%; overflow: auto;">
+		<thead>
+			<tr style="table-layout: fixed;">
+				<th>Id</th>
+				<th>Name</th>
+				<th>Alpha One</th>
+				<th>Alpha Two</th>
+				<th>Numeric Code</th>
+				<th>Independent</th>
+				<th>Updates</th>
+				<th>SubDivision</th>
+				<th>Delete</th>
+			</tr>
+		</thead>
+		<tbody>
+			@{
 
-			foreach (var T in Model)
-			{
-				<tr>
-					<td valign="top" style="table-layout: fixed; width: 400px; overflow: hidden; word-wrap: break-word; ">@T.CountryId</td>
-					<td valign="top" style="table-layout: fixed; width: 400px; overflow: hidden; word-wrap: break-word; ">@T.NameCountry</td>
-					<td valign="top" style="table-layout: fixed; width: 200px; overflow: hidden; word-wrap: break-word; ">@T.AlphaOneCountry</td>
-					<td valign="top" style="table-layout: fixed; width: 200px; overflow: hidden; word-wrap: break-word; ">@T.AlphaTwoCountry</td>
-					<td valign="top" style="table-layout: fixed; width: 200px; overflow: hidden; word-wrap: break-word; ">@T.NumericCode</td>
-					@{if (T.Independent)
-						{
-							<td valign="top" style="table-layout: fixed; width: 200px; overflow: hidden; word-wrap: break-word; ">Yes</td>
-						}
-						else
-						{
-							<td valign="top" style="table-layout: fixed; width: 200px; overflow: hidden; word-wrap: break-word; ">No</td>
-						}
-					}
-					<td><a class="btn btn-primary btn-xs" data-toggle="tooltip" title="Details" onclick="VerDetails('@T.CountryId','@T.NameCountry', '@T.AlphaOneCountry', '@T.AlphaTwoCountry', '@T.NumericCode', '@T.Independent' )">  <i class="fas fa-users" aria-hidden="true"></i></a></td>
-					<td><a class="btn btn-warning btn-xs" data-toggle="tooltip" title="Update" onclick="VerCartaAvalBeneficiario()">  <i class="fas fa-users" aria-hidden="true"></i></a> </td>
-					<td><a class="btn btn-danger btn-xs" data-toggle="tooltip" title="Delete" onclick="VerCartaAvalBeneficiario()">  <i class="fas fa-users" aria-hidden="true"></i></a> </td>
-				</tr>
+				foreach (var T in Model)
+				{
+						<tr>
+							<td valign="top" style="table-layout: fixed; width: 400px; overflow: hidden; word-wrap: break-word; ">@T.CountryId</td>
+							<td valign="top" style="table-layout: fixed; width: 400px; overflow: hidden; word-wrap: break-word; ">@T.NameCountry</td>
+							<td valign="top" style="table-layout: fixed; width: 200px; overflow: hidden; word-wrap: break-word; ">@T.AlphaOneCountry</td>
+							<td valign="top" style="table-layout: fixed; width: 200px; overflow: hidden; word-wrap: break-word; ">@T.AlphaTwoCountry</td>
+							<td valign="top" style="table-layout: fixed; width: 200px; overflow: hidden; word-wrap: break-word; ">@T.NumericCode</td>
+							@{if (T.Independent)
+								{
+									<td valign="top" style="table-layout: fixed; width: 200px; overflow: hidden; word-wrap: break-word; ">Yes</td>
+								}
+								else
+								{
+									<td valign="top" style="table-layout: fixed; width: 200px; overflow: hidden; word-wrap: break-word; ">No</td>
+								}
+							}
+							<td><a class="btn btn-primary btn-xs" data-toggle="tooltip" title="Details" onclick="VerDetails('@T.CountryId','@T.NameCountry', '@T.AlphaOneCountry', '@T.AlphaTwoCountry', '@T.NumericCode', '@T.Independent')">  <i class="fas fa-users" aria-hidden="true"></i></a></td>
+							<td><a class="btn btn-warning btn-xs" data-toggle="tooltip" title="Delete" onclick="VerSubDivision('@T.CountryId')">  <i class="fas fa-users" aria-hidden="true"></i></a> </td>
+							<td><a class="btn btn-danger btn-xs" data-toggle="tooltip" title="Delete" onclick="VerDeleteCountries('@T.CountryId','@T.NameCountry' )">  <i class="fas fa-users" aria-hidden="true"></i></a> </td>
+						</tr>
+				}
 			}
-		}
-	</tbody>
-</table>
+		</tbody>
+	</table>
+</div>
 
 
 <script type="text/javascript">
-	function VerCartaAvalBeneficiario() {
-		$('#myDetails').modal('show');
+	function VerSesion() {
+		$.ajax({
+			url: '/Home/VerSesion/',
+			data: {},
+			cache: false,
+			type: "GET",
+			success: function (data) {
+				$('#Sesion').html(data);
+			},
+			beforeSend: function () {
+			},
+			complete: function (data) {
+
+			}
+		});
 	}
 </script>
 
-<div class="modal fade" id="myDetails" role="dialog" data-keyboard="false" data-backdrop="static">
-	@*<div class="modal fade" id="myInformacion" role="dialog">*@
-	<div class="modal-dialog modal-xl">
+
+<div id="Sesion"></div>
+
+
+<script type="text/javascript">
+	document.getElementById("BtnInsert").addEventListener("click", VerInsert);
+	function VerInsert() {
+
+	}
+</script>
+
+
+<script type="text/javascript">
+	function VerDetails(Id, Name, AlphaOne, AlphaTwo, NumericCode, Independet) {
+		debugger;
+		$('#myDetails').modal('show');
+		app.Reinicio();
+		$.ajax({
+			url: '/Home/DetailsCountries/',
+			data: { 'Id': Id, 'Name': Name, 'AlphaOne': AlphaOne, 'AlphaTwo': AlphaTwo, 'NumericCode': NumericCode, 'Independet': Independet },
+			cache: false,
+			type: "GET",
+			success: function (data) {
+
+				$('#DivDetails').html(data);
+			},
+			beforeSend: function () {
+
+			},
+			complete: function (data) {
+			}
+		});
+
+	}
+</script>
+
+
+<script type="text/javascript">
+	function VerDeleteCountries(Id, Name) {
+		debugger;
+		$('#myDelete').modal('show');
+		app.Reinicio();
+		$.ajax({
+			url: '/Home/DeleteCountries/',
+			data: { 'Id': Id, 'Name': Name},
+			cache: false,
+			type: "GET",
+			success: function (data) {
+
+				$('#DivDeleteCountry').html(data);
+			},
+			beforeSend: function () {
+
+			},
+			complete: function (data) {
+			}
+		});
+
+	}
+</script>
+
+<script type="text/javascript">
+	function VerSubDivision(Id, Name) {
+		debugger;
+		$('#mySubDivision').modal('show');
+		app.Reinicio();
+		$.ajax({
+			url: '/Home/ListSubDivision/',
+			data: { 'Id': Id},
+			cache: false,
+			type: "GET",
+			success: function (data) {
+
+				$('#DivSubDivision').html(data);
+			},
+			beforeSend: function () {
+
+			},
+			complete: function (data) {
+			}
+		});
+
+	}
+</script>
+
+
+
+
+<div class="modal fade" id="myDelete" role="dialog">
+	<div class="modal-dialog modal-dialog-scrollable modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h3 class="box-title"><i class="fas fa-users"></i> Delete</h3>
+			</div>
+			<div class="modal-body">
+				<br />
+				<div id="DivDeleteCountry">
+				</div>
+				<br />
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="modal fade" id="myDetails" role="dialog">
+	<div class="modal-dialog modal-dialog-scrollable modal-xl">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>
 			</div>
 			<div class="modal-body">
-				<div style="display: none; margin-left: 300px;" id="loadingPrueba">
-					<img src="~/img/Reference_AnimationLoading.gif" />
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+				<div id="DivDetails">
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
+
+<div class="modal fade" id="mySubDivision" role="dialog">
+	<div class="modal-dialog modal-dialog-scrollable modal-xl">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<div class="modal-body">
+				<div id="DivSubDivision">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+	document.getElementById("BtnCloseSession").addEventListener("click", VerCloseSession);
+
+	function VerCloseSession() {
+		window.location.href = '/Home/Index/';
+	}
+</script>
+
+
+<script type="text/javascript">
+	function CountriesList() {
+		$.ajax({
+			url: '/Home/CountriesList/',
+			data: {},
+			cache: false,
+			type: "GET",
+			success: function (data) {
+				$('#Information').html(data);
+			},
+			beforeSend: function () {
+			},
+			complete: function (data) {
+
+			}
+		});
+	}
+</script>
+
 
 

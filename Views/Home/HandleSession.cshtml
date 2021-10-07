@@ -1,0 +1,22 @@
+﻿<script type="text/javascript">
+	function VerCerrarSesion() {
+		window.location.href = '/Home/Index/';
+	}
+</script>
+
+<script>
+	$(document).ready(function () {
+
+		app.Inicio();
+
+	});
+</script>
+
+<div id="dialogSesionExpirada" title="Basic dialog" style="display:none; position: fixed; top: 50px; left: 200px; z-index: 999999;">
+	<div class="alert alert-danger">
+		<strong>Warning!</strong><h2>The session has expired. Do you want to keep the session? </h2> <button type="button" class="btn btn-link" onclick="app.ReinicioSesion()">Yes</button>
+		<button type="button" class="btn btn-link" onclick="app.VerCerrarSesion()">No</button>
+	</div>
+	<br />
+	<br />
+</div>
