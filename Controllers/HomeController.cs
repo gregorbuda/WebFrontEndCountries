@@ -23,6 +23,7 @@ namespace WebFrontEndCountries.Controllers
 
 
 		const string SessionToken = "_Token";
+		const string UrlebApi = "https://localhost:44389/";
 		public HomeController(ILogger<HomeController> logger)
 		{
 			_logger = logger;
@@ -32,7 +33,7 @@ namespace WebFrontEndCountries.Controllers
 		//public static string PrimeraValidacion(string Usuario, string password, string Token)
 		{
 
-			RestClient client = new RestClient("https://localhost:44389/");
+			RestClient client = new RestClient(UrlebApi);
 			RestRequest request = new RestRequest("api/Countries/GetToken/", Method.GET);
 
 			request.OnBeforeDeserialization = resp => { resp.ContentType = "application/json"; };
@@ -91,7 +92,7 @@ namespace WebFrontEndCountries.Controllers
 			}
 
 
-			string valor = Send<Countries>("https://localhost:44389/api/Countries/UpdateCountries/", countries, "PUT");
+			string valor = Send<Countries>(UrlebApi+"api/Countries/UpdateCountries/", countries, "PUT");
 
 			if (valor.Contains("Correct"))
 			{
@@ -199,7 +200,7 @@ namespace WebFrontEndCountries.Controllers
 				countries.Independent = false;
 			}
 
-			string valor = SendPost<Countries>("https://localhost:44389/api/Countries/InsertCountries/", countries, "POST");
+			string valor = SendPost<Countries>(UrlebApi+"api/Countries/InsertCountries/", countries, "POST");
 
 			if (valor.Contains("Correct"))
 			{
@@ -230,7 +231,7 @@ namespace WebFrontEndCountries.Controllers
 			countries.CountryId = Convert.ToInt16(Id);
 			countries.NameCountry = Name;
 
-			string valor = SendDelete<Countries>("https://localhost:44389/api/Countries/DeleteCountries/", countries, "DELETE");
+			string valor = SendDelete<Countries>(UrlebApi+"api/Countries/DeleteCountries/", countries, "DELETE");
 
 			if (valor.Contains("Correct"))
 			{
@@ -253,7 +254,7 @@ namespace WebFrontEndCountries.Controllers
 			subDivision.CountryId = Convert.ToInt16(CountryId);
 			subDivision.SubDivisionId = Convert.ToInt16(SubDivisionId);
 
-			string valor = SendDelete<SubDivision>("https://localhost:44389/api/SubDivision/DeleteSubDivisionListByCountry/", subDivision, "DELETE");
+			string valor = SendDelete<SubDivision>(UrlebApi+"api/SubDivision/DeleteSubDivisionListByCountry/", subDivision, "DELETE");
 
 			if (valor.Contains("Correct"))
 			{
@@ -277,7 +278,7 @@ namespace WebFrontEndCountries.Controllers
 			subDivision.CodeSubDivision = CodeSubDivision;
 			subDivision.NameSubDivision = NameSubDivision;
 
-			string valor = Send<SubDivision>("https://localhost:44389/api/SubDivision/UpdateSubDivisionListByCountry/", subDivision, "PUT");
+			string valor = Send<SubDivision>(UrlebApi+"api/SubDivision/UpdateSubDivisionListByCountry/", subDivision, "PUT");
 
 			if (valor.Contains("Correct"))
 			{
@@ -301,7 +302,7 @@ namespace WebFrontEndCountries.Controllers
 			subDivision.CodeSubDivision = CodeSubDivision;
 			subDivision.NameSubDivision = NameSubDivision;
 
-			string valor = SendPost<SubDivision>("https://localhost:44389/api/SubDivision/InsertSubDivisionListByCountry/", subDivision, "POST");
+			string valor = SendPost<SubDivision>(UrlebApi+"api/SubDivision/InsertSubDivisionListByCountry/", subDivision, "POST");
 
 			if (valor.Contains("Correct"))
 			{
@@ -474,7 +475,7 @@ namespace WebFrontEndCountries.Controllers
 				}
 
 
-				RestClient client = new RestClient("https://localhost:44389/");
+				RestClient client = new RestClient(UrlebApi);
 				RestRequest request = new RestRequest("api/SubDivision/GetSubDivisionListByCountry/?CountryId=" + Id, Method.GET);
 				request.OnBeforeDeserialization = resp => { resp.ContentType = "application/json"; };
 				request.AddHeader("cache-control", "no-cache");
@@ -546,7 +547,7 @@ namespace WebFrontEndCountries.Controllers
 
 				string urlWillisAPI = String.Empty;
 
-				RestClient client = new RestClient("https://localhost:44389/");
+				RestClient client = new RestClient(UrlebApi);
 				RestRequest request = new RestRequest("api/Countries/GetCountriesList/", Method.GET);
 				request.OnBeforeDeserialization = resp => { resp.ContentType = "application/json"; };
 				request.AddHeader("cache-control", "no-cache");
@@ -623,7 +624,7 @@ namespace WebFrontEndCountries.Controllers
 				}
 
 
-				RestClient client = new RestClient("https://localhost:44389/");
+				RestClient client = new RestClient(UrlebApi);
 				RestRequest request = new RestRequest("api/Countries/GetCountriesList/", Method.GET);
 				request.OnBeforeDeserialization = resp => { resp.ContentType = "application/json"; };
 				request.AddHeader("cache-control", "no-cache");
