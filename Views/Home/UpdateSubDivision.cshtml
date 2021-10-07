@@ -1,0 +1,101 @@
+﻿@*
+	For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+	string SubId = ViewBag.SubId;
+	string CountryId = ViewBag.CountryId;
+	string Code = ViewBag.Code;
+	string Name = ViewBag.Name;
+}
+
+<h4 class="box-title"><i class="far fa-id-badge"></i> Update SubDivision, @Name</h4>
+<br />
+<div class="form-group form-row">
+
+	<div class="row">
+		<div class="form-group col-md-3" id="DivName">
+			<label for="nombre"> Code SubDivision:</label>
+			<input type="text" class="form-control" id="TxtCodeSubDivision" placeholder="CodeSubDivision" value="@Code">
+		</div>
+		<div class="form-group  col-md-3" id="DivAlphaOnE">
+			<label for="apellido"> Name SubDivision:</label>
+			<input type="text" class="form-control" id="txtNameSubDivision" placeholder="NameSubDivision" value="@Name">
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-primary" id="BtnUptDivision">Update</button>
+	</div>
+</div>
+
+<script type="text/javascript">
+	debugger;
+    function gettoken() {
+        var token = '@Html.AntiForgeryToken()';
+        token = $(token).val();
+        return token;
+   }
+</script>
+
+<script type="text/javascript">
+	document.getElementById("BtnUptDivision").addEventListener("click", VerUpSubDivision);
+	function VerUpSubDivision() {
+		app.Reinicio();
+		var Id = '@CountryId';
+		var NameCountry = '@Name';
+		var SubId = '@SubId';
+		var Code = document.getElementById("TxtCodeSubDivision").value;
+		var Name = document.getElementById("txtNameSubDivision").value;
+
+		if (Code == '' || Name == '') {
+			$.alert({
+				title: 'Alert!',
+				content: 'All the field are Requeried',
+			});
+		}
+		else {
+
+			$.ajax({
+				url: '/Home/UpdateSubDivisio/',
+				data: { __RequestVerificationToken: gettoken(), 'Id': Id, 'SubId': SubId, 'CodeSubDivision': Code, 'NameSubDivision': Name},
+				cache: false,
+				type: "POST",
+				success: function (response) {
+
+					if (response.success == "Exitoso") {
+						$.confirm({
+							title: 'Message',
+							content: "The SubDivision Was Updated.",
+							type: 'green',
+							typeAnimated: true,
+							buttons: {
+								Ok: {
+									text: 'Ok',
+									btnClass: 'btn-success',
+									action: function () {
+										SubDivisionList(Id, NameCountry);
+									}
+								}
+							}
+						});
+
+					}
+
+					if (response.success == "No") {
+						$.alert({
+							title: 'Alert',
+							content: "The process can´t be succesfull",
+						});
+					}
+
+				},
+				beforeSend: function () {
+
+				},
+				complete: function (data) {
+				}
+			});
+		}
+	}
+</script>
+
+

@@ -14,6 +14,16 @@ namespace WebFrontEndCountries.Models
 		public Countries countries { get; set; }
 	}
 
+
+	public class Sub
+	{
+		public Int16 SubDivisionId { get; set; }
+		public string CodeSubDivision { get; set; }
+		public string NameSubDivision { get; set; }
+		public Int16 CountryId { get; set; }
+
+	}
+
 	public class Countries
 	{
 

@@ -114,7 +114,7 @@ namespace WebFrontEndCountries.Controllers
 
 				string SesionToken = HttpContext.Session.GetString(SessionToken);
 
-				if (SessionToken == null)
+				if (SesionToken == null)
 				{
 					 Token = GetValidateToken();
 
@@ -174,6 +174,45 @@ namespace WebFrontEndCountries.Controllers
 
 
 
+		public IActionResult InsertCountries()
+		{
+			return PartialView("InsertCountry");
+		}
+
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public IActionResult InsertDetailsCountries(string Name, string AlphaOne, string AlphaTwo, string NumericCode, string Independet)
+		{
+
+			Countries countries = new Countries();
+			countries.NameCountry = Name;
+			countries.AlphaOneCountry = AlphaOne;
+			countries.AlphaTwoCountry = AlphaTwo;
+			countries.NumericCode = NumericCode;
+			if (Independet == "Yes")
+			{
+				countries.Independent = true;
+			}
+			else
+			{
+				countries.Independent = false;
+			}
+
+			string valor = SendPost<Countries>("https://localhost:44389/api/Countries/InsertCountries/", countries, "POST");
+
+			if (valor.Contains("Correct"))
+			{
+				//db.SpActualizarUsuarios(Usuario, Password, "", Nombre, Email, Telefono, Fax, Convert.ToInt64(Rol), Convert.ToDecimal(Ente), Convert.ToDecimal(TipoPoliza), Convert.ToInt16(UsuarioId));
+				return Json(new { success = "Exitoso", responseText = "" });
+			}
+			else
+			{
+				return Json(new { success = "No", responseText = "" });
+			}
+		}
+
+
 		public IActionResult DeleteCountries(string Id, string Name)
 		{
 			ViewBag.Id = Id;
@@ -181,9 +220,6 @@ namespace WebFrontEndCountries.Controllers
 
 			return PartialView("DeleteCountry");
 		}
-
-
-
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
@@ -208,6 +244,95 @@ namespace WebFrontEndCountries.Controllers
 		}
 
 
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public IActionResult DeleteSubDivisio(string CountryId, string SubDivisionId)
+		{
+
+			SubDivision subDivision = new SubDivision();
+			subDivision.CountryId = Convert.ToInt16(CountryId);
+			subDivision.SubDivisionId = Convert.ToInt16(SubDivisionId);
+
+			string valor = SendDelete<SubDivision>("https://localhost:44389/api/SubDivision/DeleteSubDivisionListByCountry/", subDivision, "DELETE");
+
+			if (valor.Contains("Correct"))
+			{
+				//db.SpActualizarUsuarios(Usuario, Password, "", Nombre, Email, Telefono, Fax, Convert.ToInt64(Rol), Convert.ToDecimal(Ente), Convert.ToDecimal(TipoPoliza), Convert.ToInt16(UsuarioId));
+				return Json(new { success = "Exitoso", responseText = "" });
+			}
+			else
+			{
+				return Json(new { success = "No", responseText = "" });
+			}
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public IActionResult UpdateSubDivisio(string Id, string SubId, string CodeSubDivision, string NameSubDivision)
+		{
+
+			SubDivision subDivision = new SubDivision();
+			subDivision.CountryId = Convert.ToInt16(Id);
+			subDivision.SubDivisionId = Convert.ToInt16(SubId);
+			subDivision.CodeSubDivision = CodeSubDivision;
+			subDivision.NameSubDivision = NameSubDivision;
+
+			string valor = Send<SubDivision>("https://localhost:44389/api/SubDivision/UpdateSubDivisionListByCountry/", subDivision, "PUT");
+
+			if (valor.Contains("Correct"))
+			{
+				//db.SpActualizarUsuarios(Usuario, Password, "", Nombre, Email, Telefono, Fax, Convert.ToInt64(Rol), Convert.ToDecimal(Ente), Convert.ToDecimal(TipoPoliza), Convert.ToInt16(UsuarioId));
+				return Json(new { success = "Exitoso", responseText = "" });
+			}
+			else
+			{
+				return Json(new { success = "No", responseText = "" });
+			}
+		}
+
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public IActionResult InsertSubDivision(string Id, string CodeSubDivision, string NameSubDivision)
+		{
+
+			SubDivision subDivision = new SubDivision();
+			subDivision.CountryId = Convert.ToInt16(Id);
+			subDivision.CodeSubDivision = CodeSubDivision;
+			subDivision.NameSubDivision = NameSubDivision;
+
+			string valor = SendPost<SubDivision>("https://localhost:44389/api/SubDivision/InsertSubDivisionListByCountry/", subDivision, "POST");
+
+			if (valor.Contains("Correct"))
+			{
+				//db.SpActualizarUsuarios(Usuario, Password, "", Nombre, Email, Telefono, Fax, Convert.ToInt64(Rol), Convert.ToDecimal(Ente), Convert.ToDecimal(TipoPoliza), Convert.ToInt16(UsuarioId));
+				return Json(new { success = "Exitoso", responseText = "" });
+			}
+			else
+			{
+				return Json(new { success = "No", responseText = "" });
+			}
+		}
+
+		public IActionResult InsertDivision(string Id, string Name)
+		{
+			ViewBag.Id = Id;
+			ViewBag.Name = Name;
+
+			return PartialView("SubDivision");
+		}
+
+		public IActionResult UpdateDivision(string SubId, string CountryId, string Code, string Name)
+		{
+			ViewBag.SubId = SubId;
+			ViewBag.CountryId = CountryId;
+			ViewBag.Code = Code;
+			ViewBag.Name = Name;
+
+			return PartialView("UpdateSubDivision");
+		}
+
+
 		public string SendDelete<T>(string url, T objectRequest, string method = "DELETE")
 		{
 
@@ -218,7 +343,7 @@ namespace WebFrontEndCountries.Controllers
 
 				string SesionToken = HttpContext.Session.GetString(SessionToken);
 
-				if (SessionToken == null)
+				if (SesionToken == null)
 				{
 					Token = GetValidateToken();
 
@@ -265,11 +390,144 @@ namespace WebFrontEndCountries.Controllers
 		}
 
 
-		public IActionResult ListSubDivision(string Id)
+		public string SendPost<T>(string url, T objectRequest, string method = "POST")
+		{
+
+			string result = "";
+			try
+			{
+				string Token = "";
+
+				string SesionToken = HttpContext.Session.GetString(SessionToken);
+
+				if (SesionToken == null)
+				{
+					Token = GetValidateToken();
+
+					Token = Token.Remove(0, 1);
+
+					Token = Token.Remove(Token.Length - 1);
+
+					HttpContext.Session.SetString(SessionToken, Token);
+				}
+				else
+				{
+					Token = HttpContext.Session.GetString(SessionToken);
+				}
+
+				//serializamos el objeto
+				string json = Newtonsoft.Json.JsonConvert.SerializeObject(objectRequest);
+
+				//peticion
+				WebRequest request = WebRequest.Create(url);
+
+				//headers
+				request.Method = method;
+				request.PreAuthenticate = true;
+				request.Headers.Add("Authorization", "Bearer " + Token);
+				request.ContentType = "application/json";
+				request.Timeout = 10000000; //opcional
+
+				using (var streamWriter = new StreamWriter(request.GetRequestStream()))
+				{
+					streamWriter.Write(json);
+					streamWriter.Flush();
+				}
+				var httpResponse = (HttpWebResponse)request.GetResponse();
+				using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+				{
+					result = streamReader.ReadToEnd();
+				}
+			}
+			catch (Exception e)
+			{
+				result = e.Message;
+			}
+			return result;
+		}
+
+
+		public IActionResult ListSubDivision(string Id, string Name)
 		{
 			ViewBag.Id = Id;
+			ViewBag.Name = Name;
 
-			return PartialView("ListSubDivision");
+			try
+			{
+				string Token = "";
+
+				string SesionToken = HttpContext.Session.GetString(SessionToken);
+
+				if (SesionToken == null)
+				{
+					Token = GetValidateToken();
+
+					Token = Token.Remove(0, 1);
+
+					Token = Token.Remove(Token.Length - 1);
+
+					HttpContext.Session.SetString(SessionToken, Token);
+				}
+				else
+				{
+					Token = HttpContext.Session.GetString(SessionToken);
+				}
+
+
+				RestClient client = new RestClient("https://localhost:44389/");
+				RestRequest request = new RestRequest("api/SubDivision/GetSubDivisionListByCountry/?CountryId=" + Id, Method.GET);
+				request.OnBeforeDeserialization = resp => { resp.ContentType = "application/json"; };
+				request.AddHeader("cache-control", "no-cache");
+				request.AddHeader("content-type", "application/x-www-form-urlencoded");
+				request.AddHeader("Authorization", "Bearer " + Token);
+
+				client.ConfigureWebRequest((r) =>
+				{
+					r.ServicePoint.Expect100Continue = false;
+					r.KeepAlive = true;
+				});
+				ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
+				IRestResponse response = client.Execute(request);
+
+				if (response.IsSuccessful)
+				{
+					var content = response.Content;
+
+					if (content.Contains("Invalid"))
+					{
+						return PartialView("Error");
+					}
+					else
+					{
+						if (content.Contains("Zero"))
+						{
+							return PartialView("Zero");
+						}
+						else
+						{
+
+
+							var listSubDivsion = JsonConvert.DeserializeObject<List<SubDivision>>(content);
+
+							var SubDivsion = listSubDivsion.ToList();
+
+							return PartialView("ListSubDivision", SubDivsion.ToList());
+						}
+					}
+
+				}
+				else
+				{
+
+					return PartialView("Error");
+				}
+
+			}
+			catch (Exception ex)
+			{
+
+				return PartialView("Error");
+			}
 		}
 
 
@@ -310,7 +568,7 @@ namespace WebFrontEndCountries.Controllers
 					if (content.Contains("Invalid"))
 					{
 
-						return PartialView("VistaErrorGenerico");
+						return PartialView("Error");
 					}
 					else
 					{
@@ -387,7 +645,7 @@ namespace WebFrontEndCountries.Controllers
 					if (content.Contains("Invalid"))
 					{
 
-						return PartialView("VistaErrorGenerico");
+						return PartialView("Error");
 					}
 					else
 					{

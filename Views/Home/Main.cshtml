@@ -38,25 +38,25 @@
 
 				foreach (var T in Model)
 				{
-						<tr>
-							<td valign="top" style="table-layout: fixed; width: 400px; overflow: hidden; word-wrap: break-word; ">@T.CountryId</td>
-							<td valign="top" style="table-layout: fixed; width: 400px; overflow: hidden; word-wrap: break-word; ">@T.NameCountry</td>
-							<td valign="top" style="table-layout: fixed; width: 200px; overflow: hidden; word-wrap: break-word; ">@T.AlphaOneCountry</td>
-							<td valign="top" style="table-layout: fixed; width: 200px; overflow: hidden; word-wrap: break-word; ">@T.AlphaTwoCountry</td>
-							<td valign="top" style="table-layout: fixed; width: 200px; overflow: hidden; word-wrap: break-word; ">@T.NumericCode</td>
-							@{if (T.Independent)
-								{
-									<td valign="top" style="table-layout: fixed; width: 200px; overflow: hidden; word-wrap: break-word; ">Yes</td>
-								}
-								else
-								{
-									<td valign="top" style="table-layout: fixed; width: 200px; overflow: hidden; word-wrap: break-word; ">No</td>
-								}
+					<tr>
+						<td valign="top" style="table-layout: fixed; width: 400px; overflow: hidden; word-wrap: break-word; ">@T.CountryId</td>
+						<td valign="top" style="table-layout: fixed; width: 400px; overflow: hidden; word-wrap: break-word; ">@T.NameCountry</td>
+						<td valign="top" style="table-layout: fixed; width: 200px; overflow: hidden; word-wrap: break-word; ">@T.AlphaOneCountry</td>
+						<td valign="top" style="table-layout: fixed; width: 200px; overflow: hidden; word-wrap: break-word; ">@T.AlphaTwoCountry</td>
+						<td valign="top" style="table-layout: fixed; width: 200px; overflow: hidden; word-wrap: break-word; ">@T.NumericCode</td>
+						@{if (T.Independent)
+							{
+								<td valign="top" style="table-layout: fixed; width: 200px; overflow: hidden; word-wrap: break-word; ">Yes</td>
 							}
-							<td><a class="btn btn-primary btn-xs" data-toggle="tooltip" title="Details" onclick="VerDetails('@T.CountryId','@T.NameCountry', '@T.AlphaOneCountry', '@T.AlphaTwoCountry', '@T.NumericCode', '@T.Independent')">  <i class="fas fa-users" aria-hidden="true"></i></a></td>
-							<td><a class="btn btn-warning btn-xs" data-toggle="tooltip" title="Delete" onclick="VerSubDivision('@T.CountryId')">  <i class="fas fa-users" aria-hidden="true"></i></a> </td>
-							<td><a class="btn btn-danger btn-xs" data-toggle="tooltip" title="Delete" onclick="VerDeleteCountries('@T.CountryId','@T.NameCountry' )">  <i class="fas fa-users" aria-hidden="true"></i></a> </td>
-						</tr>
+							else
+							{
+								<td valign="top" style="table-layout: fixed; width: 200px; overflow: hidden; word-wrap: break-word; ">No</td>
+							}
+						}
+						<td><a class="btn btn-primary btn-xs" data-toggle="tooltip" title="Details" onclick="VerDetails('@T.CountryId','@T.NameCountry', '@T.AlphaOneCountry', '@T.AlphaTwoCountry', '@T.NumericCode', '@T.Independent')">  <i class="fas fa-users" aria-hidden="true"></i></a></td>
+						<td><a class="btn btn-warning btn-xs" data-toggle="tooltip" title="Delete" onclick="VerSubDivision('@T.CountryId', '@T.NameCountry')">  <i class="fas fa-users" aria-hidden="true"></i></a> </td>
+						<td><a class="btn btn-danger btn-xs" data-toggle="tooltip" title="Delete" onclick="VerDeleteCountries('@T.CountryId','@T.NameCountry' )">  <i class="fas fa-users" aria-hidden="true"></i></a> </td>
+					</tr>
 				}
 			}
 		</tbody>
@@ -89,8 +89,24 @@
 
 <script type="text/javascript">
 	document.getElementById("BtnInsert").addEventListener("click", VerInsert);
-	function VerInsert() {
+	function VerInsert() {		
+		$('#myInsert').modal('show');
+		app.Reinicio();
+		$.ajax({
+			url: '/Home/InsertCountries/',
+			data: { },
+			cache: false,
+			type: "GET",
+			success: function (data) {
 
+				$('#DivInsertCountry').html(data);
+			},
+			beforeSend: function () {
+
+			},
+			complete: function (data) {
+			}
+		});
 	}
 </script>
 
@@ -127,7 +143,7 @@
 		app.Reinicio();
 		$.ajax({
 			url: '/Home/DeleteCountries/',
-			data: { 'Id': Id, 'Name': Name},
+			data: { 'Id': Id, 'Name': Name },
 			cache: false,
 			type: "GET",
 			success: function (data) {
@@ -146,12 +162,11 @@
 
 <script type="text/javascript">
 	function VerSubDivision(Id, Name) {
-		debugger;
 		$('#mySubDivision').modal('show');
 		app.Reinicio();
 		$.ajax({
 			url: '/Home/ListSubDivision/',
-			data: { 'Id': Id},
+			data: { 'Id': Id, 'Name': Name },
 			cache: false,
 			type: "GET",
 			success: function (data) {
@@ -164,10 +179,45 @@
 			complete: function (data) {
 			}
 		});
-
 	}
 </script>
 
+<script type="text/javascript">
+	function SubDivisionList(Id, Name) {
+		app.Reinicio();
+		$.ajax({
+			url: '/Home/ListSubDivision/',
+			data: { 'Id': Id, 'Name': Name },
+			cache: false,
+			type: "GET",
+			success: function (data) {
+
+				$('#DivSubDivision').html(data);
+			},
+			beforeSend: function () {
+
+			},
+			complete: function (data) {
+			}
+		});
+	}
+</script>
+
+
+<div class="modal fade" id="myInsert" role="dialog">
+	<div class="modal-dialog modal-dialog-scrollable modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+			</div>
+			<div class="modal-body">
+				<br />
+				<div id="DivInsertCountry">
+				</div>
+				<br />
+			</div>
+		</div>
+	</div>
+</div>
 
 
 
@@ -204,7 +254,7 @@
 </div>
 
 <div class="modal fade" id="mySubDivision" role="dialog">
-	<div class="modal-dialog modal-dialog-scrollable modal-xl">
+	<div class="modal-dialog modal-dialog-scrollable modal-lg">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">&times;</button>

@@ -1,0 +1,123 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<div class="form-group form-row">
+	<h4 class="box-title"><i class="far fa-id-badge"></i> Country</h4>
+	<div class="row">
+
+		<div class="form-group col-md-3" id="DivName">
+			<label for="nombre"> Name:</label>
+			<input type="text" class="form-control" id="txtName" placeholder="txtName">
+		</div>
+		<div class="form-group  col-md-3" id="DivAlphaOnE">
+			<label for="apellido"> Alpha-2 Code:</label>
+			<input type="text" class="form-control" id="txtAlfaOne" placeholder="txtAlfaOne">
+		</div>
+		<div class="form-group  col-md-3" id="DivAlphatWO">
+			<label for="apellido"> Alpha-3 Code:</label>
+			<input type="text" class="form-control" id="TxtAlphaTwo" placeholder="TxtAlphaTwo">
+		</div>
+		<div class="form-group  col-md-3" id="DivNumeric">
+			<label for="apellido"> Numeric Code:</label>
+			<input type="text" class="form-control" id="TxtNumericCode" placeholder="TxtNumericCode" onkeypress="return isNumberKey(event)">
+		</div>
+		<div class="form-group  col-md-3" id="Sexo">
+			<label for="cargo">Independet:</label>
+			<select name="CboIndependet" id="CboIndependet" data-placeholder=" " class="form-control chosen-select-width">
+				<option value="Y">Yes</option>
+				<option value="N">No</option>
+			</select>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button type="button" class="btn btn-primary" id="BtnInserCountry">Insert</button>
+		<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+	</div>
+</div>
+
+<script type="text/javascript">
+	function isNumberKey(evt) {
+		var charCode = (evt.which) ? evt.which : event.keyCode
+		if (charCode > 31 && (charCode < 48 || charCode > 57))
+			return false;
+		return true;
+	}
+</script>
+
+<script type="text/javascript">
+	debugger;
+    function gettoken() {
+        var token = '@Html.AntiForgeryToken()';
+        token = $(token).val();
+        return token;
+   }
+</script>
+
+<script type="text/javascript">
+	document.getElementById("BtnInserCountry").addEventListener("click", VerInsertountry);
+	function VerInsertountry() {
+		app.Reinicio();
+
+		var Name = document.getElementById("txtName").value;
+		var AlfaOne = document.getElementById("txtAlfaOne").value;
+		var AlphaTwo = document.getElementById("TxtAlphaTwo").value;
+		var NumericCode = document.getElementById("TxtNumericCode").value;
+		var Independet = document.getElementById("CboIndependet").value;
+
+
+		if (Name == '' || AlfaOne == '' || AlphaTwo == '' || NumericCode == '') {
+			$.alert({
+				title: 'Alert!',
+				content: 'All the field are Requeried',
+			});
+		}
+		else {
+
+			$.ajax({
+				url: '/Home/InsertDetailsCountries/',
+				data: { __RequestVerificationToken: gettoken(), 'Name': Name, 'AlphaOne': AlfaOne, 'AlphaTwo': AlphaTwo, 'NumericCode': NumericCode, 'Independet': Independet },
+				cache: false,
+				type: "POST",
+				success: function (response) {
+
+					if (response.success == "Exitoso") {
+						$.confirm({
+							title: 'Message',
+							content: "The Country was Updated.",
+							type: 'green',
+							typeAnimated: true,
+							buttons: {
+								Ok: {
+									text: 'Ok',
+									btnClass: 'btn-success',
+									action: function () {
+										CountriesList();
+										$('.modal-backdrop').remove();
+									}
+								}
+							}
+						});
+
+					}
+
+
+					if (response.success == "No") {
+						$.alert({
+							title: 'Alert',
+							content: "The process can´t be succesfull",
+						});
+					}
+
+				},
+				beforeSend: function () {
+
+				},
+				complete: function (data) {
+				}
+			});
+		}
+	}
+</script>

@@ -1,6 +1,219 @@
 ﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+	For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-
+	string Id = ViewBag.Id;
+	string Name = ViewBag.Name;
 }
+<script type="text/javascript">
+	$(document).ready(function () {
+		VerSesion();
+		$('#TableSubDivision').DataTable({
+
+		});
+	});
+</script>
+
+<button type="button" class="btn btn-warning" id="BtnInsertSubDivision">Insert SubDivision</button>
+
+<script type="text/javascript">
+	document.getElementById("BtnInsertSubDivision").addEventListener("click", VerSubDivisionInsert);
+	function VerSubDivisionInsert() {
+		app.Reinicio();
+		var Id = '@Id';
+		var Name = '@Name';
+		$.ajax({
+			url: '/Home/InsertDivision/',
+			data: { 'Id': Id, 'Name': Name },
+			cache: false,
+			type: "GET",
+			success: function (data) {
+
+				$('#Subdivision').html(data);
+			},
+			beforeSend: function () {
+
+			},
+			complete: function (data) {
+			}
+		});
+	}
+</script>
+
+
+<div id="Subdivision"></div>
+
+<br/>
+
+<h4>List of SubDivision of @Name</h4>
+<table id="TableSubDivision">
+	<thead>
+		<tr>
+			<th style="display:none"></th>
+			<th style="display:none"></th>
+			<th>Code SubDivision</th>
+			<th>Name Division</th>
+			<th>Update</th>
+			<th>Delete</th>
+		</tr>
+	</thead>
+	<tbody>
+
+		@{
+			int cont = 0;
+			string NombreCode;
+			string NombreName;
+			foreach (var T in Model)
+			{
+				<tr>
+					<td style="display:none">@T.CountryId</td>
+					<td style="display:none">@T.SubDivisionId</td>
+					<td>@T.CodeSubDivision</td>
+					<td>@T.NameSubDivision</td>
+					<td><a class="btn btn-primary btn-xs" data-toggle="tooltip" title="Update" onclick="VerUpdateSubDivision('@T.SubDivisionId', '@T.CountryId', '@T.CodeSubDivision', '@T.NameSubDivision')">  <i class="fas fa-users" aria-hidden="true"></i></a> </td>
+					<td><a class="btn btn-danger btn-xs" data-toggle="tooltip" title="Delete" onclick="VerDeleteSubDivision('@T.SubDivisionId', '@T.CountryId')">  <i class="fas fa-users" aria-hidden="true"></i></a> </td>
+				</tr>
+			}
+		}
+
+	</tbody>
+</table>
+
+
+<script type="text/javascript">
+	function VerUpdateSubDivision(SubId, CountryId, Code, Name) {
+		app.Reinicio();
+		$.ajax({
+			url: '/Home/UpdateDivision/',
+			data: { 'SubId': SubId, 'CountryId': CountryId, 'Code': Code, 'Name': Name },
+			cache: false,
+			type: "GET",
+			success: function (data) {
+
+				$('#Subdivision').html(data);
+			},
+			beforeSend: function () {
+
+			},
+			complete: function (data) {
+			}
+		});
+	}
+</script>
+
+
+
+<script type="text/javascript">
+	debugger;
+    function gettoken() {
+        var token = '@Html.AntiForgeryToken()';
+        token = $(token).val();
+        return token;
+   }
+</script>
+
+<script type="text/javascript">
+		function VerDeleteSubDivision(SubDivisionId, CountryId) {
+			var Name = '@Name';
+			app.Reinicio();
+				$.ajax({
+					url: '/Home/DeleteSubDivisio/',
+					data: { __RequestVerificationToken: gettoken(), 'CountryId': CountryId, 'SubDivisionId': SubDivisionId },
+					cache: false,
+					type: "POST",
+					success: function (response) {
+
+						if (response.success == "Exitoso") {
+							$.confirm({
+								title: 'Message',
+								content: "The SubDivision was Deleted.",
+								type: 'green',
+								typeAnimated: true,
+								buttons: {
+									Ok: {
+										text: 'Ok',
+										btnClass: 'btn-success',
+										action: function () {
+											SubDivisionList(CountryId, Name);
+										}
+									}
+								}
+							});
+
+						}
+
+
+						if (response.success == "No") {
+							$.alert({
+								title: 'Alert',
+								content: "The process can´t be succesfull",
+							});
+						}
+
+					},
+					beforeSend: function () {
+
+					},
+					complete: function (data) {
+					}
+				});
+
+		}
+</script>
+
+
+
+
+
+@*<script type="text/javascript">
+	document.getElementById("BtnUpdateSubDivision").addEventListener("click", VerUpdateSubDivision);
+	function VerUpdateSubDivision() {
+		var Id = '@Id';
+		app.Reinicio();
+		debugger;
+		var gridDos = document.getElementById("TableSubDivision");
+		var checkBoxesDos = gridDos.getElementsByTagName("INPUT");
+		var CantidadCategorias = checkBoxesDos.length;
+		for (var j = 0; j < CantidadCategorias; j++) {
+
+			if (checkBoxesDos[j].checked) {
+
+				var rowdos = checkBoxesDos[j].parentNode.parentNode;
+				Contdos = "CodeSub" + rowdos.cells[0].innerHTML;
+				Conttres = "NameSub" + rowdos.cells[0].innerHTML;
+
+				var CodeSubDivision = document.getElementById(Contdos).value;
+
+				var NameSubDivision = document.getElementById(Conttres).value;
+
+				$.ajax({
+
+					url: '/Home/UpdateSubDivisio/',
+					data: { 'CountryId': Id, 'SubDivisionId': rowdos.cells[3].innerHTML, 'CodeSubDivision': CodeSubDivision, 'NameSubDivision': NameSubDivision },
+					cache: false,
+					type: "GET",
+					success: function (response) {
+
+					},
+					beforeSend: function () {
+					},
+					complete: function (response) {
+					},
+					error: function (jqXHR, textStatus, errorThrown) {
+
+					},
+				});
+
+			}
+		}
+	}
+</script>*@
+
+
+
+
+
+
+
+
+
